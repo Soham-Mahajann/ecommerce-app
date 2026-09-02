@@ -17,6 +17,7 @@ services:
     container_name: ecommerce-backend
     environment:
       DB_URL: postgresql://ecommerce:ecommerce123@db:5432/ecommerce
+      DB_SSL: "false"
       PORT: 3000
       STRIPE_SECRET: dummy
       SESSION_SECRET: dev-secret
@@ -33,9 +34,7 @@ services:
     build: ./client
     container_name: ecommerce-frontend
     ports:
-      - "3001:3000"
-    environment:
-      HOST: 0.0.0.0
+      - "3001:80"
     depends_on:
       - backend
     networks:
