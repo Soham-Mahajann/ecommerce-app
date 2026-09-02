@@ -1,0 +1,48 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: ecommerce-db
+    environment:
+      POSTGRES_USER: ecommerce
+      POSTGRES_PASSWORD: ecommerce123
+      POSTGRES_DB: ecommerce
+    volumes:
+      - ecommerce-db-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
+  backend:
+    build: ./server
+    container_name: ecommerce-backend
+    environment:
+      DB_URL: postgresql://ecommerce:ecommerce123@db:5432/ecommerce
+      PORT: 3000
+      STRIPE_SECRET: dummy
+      SESSION_SECRET: dev-secret
+      GITHUB_CLIENT: dummy
+      GITHUB_SECRET: dummy
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - ecommerce-network
+
+  frontend:
+    build: ./client
+    container_name: ecommerce-frontend
+    ports:
+      - "3001:3000"
+    environment:
+      HOST: 0.0.0.0
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-network
+
+volumes:
+  ecommerce-db-data:
+
+networks:
+  ecommerce-network:
